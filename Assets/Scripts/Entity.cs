@@ -71,7 +71,7 @@ public class Entity : MonoBehaviour, IFactions
 
 	public void Push(Vector2 dir, float force)
 	{
-		SetVelocity(rb.velocity + dir * force);
+		SetVelocity(rb.linearVelocity + dir * force);
 	}
 
 	public virtual Vector2 GetForward()
@@ -120,7 +120,7 @@ public class Entity : MonoBehaviour, IFactions
 	private void BobbleHead()
 	{
 		bobble = Mathf.Repeat(bobble + Time.deltaTime * Mathf.PI * maskBobbleSpeed, Mathf.PI * 2);
-		bobble = Mathf.Repeat(bobble + Time.deltaTime * rb.velocity.magnitude * Mathf.PI * 2 * maskBobbleSpeed, Mathf.PI * 2);
+		bobble = Mathf.Repeat(bobble + Time.deltaTime * rb.linearVelocity.magnitude * Mathf.PI * 2 * maskBobbleSpeed, Mathf.PI * 2);
 		switch (maskBobble)
 		{
 			case BobbleTypes.Breathe:
@@ -145,12 +145,12 @@ public class Entity : MonoBehaviour, IFactions
 
 	private void SetVelocity(Vector2 velocity)
 	{
-		rb.velocity = velocity;
+		rb.linearVelocity = velocity;
 	}
 
 	public Vector2 GetSpeed()
 	{
-		return rb.velocity;
+		return rb.linearVelocity;
 	}
 
 	protected void SetMovement(Vector2 dir)
@@ -189,16 +189,16 @@ public class Entity : MonoBehaviour, IFactions
 		} else
 		{
 			Vector2 movement = speed * Time.fixedDeltaTime * 8 * moveDir;
-			Vector2 drag = Time.fixedDeltaTime * 8 * rb.velocity;
-			if (stun <= 0) rb.velocity = ClampVelocity(rb.velocity + movement - drag, speed);
-			else rb.velocity -= drag;
+			Vector2 drag = Time.fixedDeltaTime * 8 * rb.linearVelocity;
+			if (stun <= 0) rb.linearVelocity = ClampVelocity(rb.linearVelocity + movement - drag, speed);
+			else rb.linearVelocity -= drag;
 		}
 	}
 
 	protected void Update()
 	{
 		stun = Mathf.Clamp(stun - Time.deltaTime, 0, 1f);
-		if (rb.velocity.magnitude >= 0.25f) animator.SetBool("Moving", true);
+		if (rb.linearVelocity.magnitude >= 0.25f) animator.SetBool("Moving", true);
 		else animator.SetBool("Moving", false);
 
 		if (mask != null) BobbleHead();
